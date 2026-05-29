@@ -1,0 +1,475 @@
+/* Mythic GME Plugin Styles */
+
+.mythic-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* Tab bar */
+.mythic-tab-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 8px;
+  background: var(--background-primary);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.mythic-tab-btn {
+  flex: 1;
+  padding: 7px 4px;
+  cursor: pointer;
+  background: var(--background-modifier-hover);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 5px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mythic-tab-btn:hover {
+  background: var(--background-modifier-border);
+  color: var(--text-normal);
+}
+
+.mythic-tab-btn.active {
+  background: var(--interactive-accent);
+  border-color: var(--interactive-accent);
+  color: white;
+}
+
+/* Tab content */
+.mythic-tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 8px;
+}
+
+/* Section headers */
+.mythic-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 0 0 8px 0;
+}
+
+/* Chaos Factor */
+.mythic-chaos-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+}
+
+.mythic-chaos-label {
+  font-weight: 600;
+  color: var(--text-normal);
+  flex-shrink: 0;
+}
+
+.mythic-chaos-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-accent);
+  min-width: 28px;
+  text-align: center;
+}
+
+.mythic-chaos-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--background-modifier-hover);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+
+.mythic-chaos-btn:hover {
+  background: var(--interactive-accent);
+  color: white;
+  border-color: var(--interactive-accent);
+}
+
+/* Fate Chart */
+.mythic-fate-section {
+  margin-bottom: 16px;
+}
+
+.mythic-odds-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 13px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.mythic-roll-btn {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 5px;
+  background: var(--interactive-accent);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.03em;
+  margin-bottom: 0;
+}
+
+.mythic-roll-btn:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.mythic-roll-btn.secondary {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.mythic-roll-btn.secondary:hover {
+  background: var(--background-modifier-border);
+}
+
+/* Result box */
+.mythic-result {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--background-secondary);
+  border-left: 3px solid var(--background-modifier-border);
+  display: none;
+}
+
+.mythic-result.visible {
+  display: block;
+}
+
+.mythic-result.yes {
+  border-left-color: #4caf50;
+}
+
+.mythic-result.exceptional-yes {
+  border-left-color: #8bc34a;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.mythic-result.no {
+  border-left-color: #f44336;
+}
+
+.mythic-result.exceptional-no {
+  border-left-color: #ff5722;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.mythic-result-answer {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-normal);
+  margin-bottom: 4px;
+}
+
+.mythic-result-answer.yes { color: #4caf50; }
+.mythic-result-answer.exceptional-yes { color: #8bc34a; }
+.mythic-result-answer.no { color: #f44336; }
+.mythic-result-answer.exceptional-no { color: #ff5722; }
+
+.mythic-result-roll {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mythic-result-event {
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgba(255, 165, 0, 0.15);
+  border: 1px solid rgba(255, 165, 0, 0.4);
+  font-size: 12px;
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+/* Divider */
+.mythic-divider {
+  border: none;
+  border-top: 1px solid var(--background-modifier-border);
+  margin: 14px 0;
+}
+
+/* Random Events tab */
+.mythic-event-grid {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mythic-event-result {
+  padding: 10px 12px;
+  border-radius: 5px;
+  background: var(--background-secondary);
+  font-size: 13px;
+}
+
+.mythic-event-result-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.mythic-event-result-value {
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.mythic-meaning-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mythic-meaning-word {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  background: var(--background-secondary);
+  text-align: center;
+}
+
+.mythic-meaning-word-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.mythic-meaning-word-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+.mythic-table-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* Scene tab */
+.mythic-scene-info {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--background-secondary);
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.mythic-scene-type {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.mythic-scene-type.expected { color: #4caf50; }
+.mythic-scene-type.altered { color: #ff9800; }
+.mythic-scene-type.interrupt { color: #f44336; }
+
+.mythic-scene-roll {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Lists tab */
+.mythic-list-section {
+  margin-bottom: 16px;
+}
+
+.mythic-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mythic-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: 13px;
+}
+
+.mythic-list-item:last-child {
+  border-bottom: none;
+}
+
+.mythic-list-item-num {
+  font-size: 11px;
+  color: var(--text-faint);
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.mythic-list-item-text {
+  flex: 1;
+  color: var(--text-normal);
+}
+
+.mythic-list-item-delete {
+  opacity: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 14px;
+  transition: opacity 0.1s, color 0.1s;
+}
+
+.mythic-list-item:hover .mythic-list-item-delete {
+  opacity: 1;
+}
+
+.mythic-list-item-delete:hover {
+  color: var(--text-error);
+}
+
+.mythic-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.mythic-add-input {
+  flex: 1;
+  padding: 6px 9px;
+  border-radius: 5px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.mythic-add-input:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+}
+
+.mythic-add-btn {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background: var(--interactive-accent);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mythic-add-btn:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.mythic-list-empty {
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.mythic-list-section-sep {
+  list-style: none;
+  border-top: 2px dashed var(--background-modifier-border);
+  margin: 4px 0;
+}
+
+/* Fate Check mode toggle */
+.mythic-mode-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid var(--background-modifier-border);
+}
+
+.mythic-mode-btn {
+  flex: 1;
+  padding: 6px 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+}
+
+.mythic-mode-btn.active {
+  background: var(--interactive-accent);
+  color: white;
+}
+
+/* NPC Behavior */
+.mythic-npc-result {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mythic-npc-word {
+  flex: 1;
+  padding: 10px;
+  background: var(--background-secondary);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.mythic-npc-word-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.mythic-npc-word-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-accent);
+}

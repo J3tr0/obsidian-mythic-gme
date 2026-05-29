@@ -1,0 +1,10 @@
+{
+  "id": "mythic-gme",
+  "name": "Mythic GME 2nd Edition",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Mythic Game Master Emulator 2nd Edition — oracle e strumenti per il gioco di ruolo in solitario",
+  "author": "Fabio Giannace",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
