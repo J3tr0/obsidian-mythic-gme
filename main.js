@@ -575,6 +575,10 @@ class MythicView extends ItemView {
       } else {
         eventEl.style.display = 'none';
       }
+
+      const logLines = [`? [${ODDS_LABELS[oddsIdx]}] (CF ${this.cf}) → ${res.answer} (tiro: ${res.roll})`];
+      if (res.isRandomEvent) logLines.push('⚡ Evento Casuale attivato!');
+      this.plugin.logResult(logLines);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -594,6 +598,8 @@ class MythicView extends ItemView {
       npcResult.addClass('visible');
       npcWordVal.textContent = res.result;
       npcRollInfo.textContent = `Tiro: ${res.roll}`;
+      if (this.plugin.settings.logLevel === 'full')
+        this.plugin.logResult([`🎭 Comportamento PNG: ${res.result} (${res.roll})`]);
     };
   }
 
@@ -663,15 +669,22 @@ class MythicView extends ItemView {
       const needsChar = focus.result.includes('PNG') || focus.result.includes('PG Neg') || focus.result.includes('PG Pos');
       const listToUse = needsThread ? this.threads : (needsChar ? this.characters : null);
 
+      let listEntry = null;
       if (listToUse) {
         const res = rollListElement(listToUse);
         listResultBox.style.display = '';
+        listEntry = res.choose ? 'Choose (riga vuota)' : res.item ?? '(lista vuota)';
         listResultVal.textContent = res.choose
           ? '→ Choose: scegli tu (riga vuota)'
           : res.item ?? '(lista vuota — usa Contesto Attuale)';
       } else {
         listResultBox.style.display = 'none';
       }
+
+      const logLines = [`⚡ Focus: ${focus.result} | ${meaning.word1} / ${meaning.word2}`];
+      if (meaning.doubledDown) logLines.push('⚠️ Doubling Down!');
+      if (listEntry) logLines.push(`📋 Lista: ${listEntry}`);
+      this.plugin.logResult(logLines);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -690,6 +703,8 @@ class MythicView extends ItemView {
       focusOnlyBox.style.display = '';
       focusOnlyVal.textContent = focus.result;
       focusOnlyRoll.textContent = `Tiro: ${focus.roll}`;
+      if (this.plugin.settings.logLevel === 'full')
+        this.plugin.logResult([`⚡ Focus: ${focus.result} (d100: ${focus.roll})`]);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -722,6 +737,11 @@ class MythicView extends ItemView {
       mw1Val.textContent = m.word1;
       mw2Val.textContent = m.word2;
       doubleDownNote.style.display = m.doubledDown ? '' : 'none';
+      if (this.plugin.settings.logLevel === 'full') {
+        const lines = [`📖 ${tableSelect.value}: ${m.word1} / ${m.word2}`];
+        if (m.doubledDown) lines.push('⚠️ Doubling Down!');
+        this.plugin.logResult(lines);
+      }
     };
   }
 
@@ -756,6 +776,7 @@ class MythicView extends ItemView {
       } else {
         sceneNote.textContent = 'La scena inizia come previsto!';
       }
+      this.plugin.logResult([`> ${res.desc} (d10: ${res.roll}, CF: ${this.cf})`], true);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -774,6 +795,8 @@ class MythicView extends ItemView {
       adjBox.style.display = '';
       adjVal.textContent = res.result;
       adjRoll.textContent = `Tiro d10: ${res.roll}`;
+      if (this.plugin.settings.logLevel === 'full')
+        this.plugin.logResult([`🎲 Aggiustamento Scena: ${res.result} (d10: ${res.roll})`]);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -826,7 +849,7 @@ class MythicView extends ItemView {
     const randVal = randResult.createDiv({ cls: 'mythic-event-result-value' });
     const randRoll = randResult.createDiv({ cls: 'mythic-result-roll' });
 
-    const doRandRoll = (list) => {
+    const doRandRoll = (list, label) => {
       if (list.length === 0) {
         randResult.style.display = '';
         randVal.textContent = '(lista vuota)';
@@ -837,10 +860,14 @@ class MythicView extends ItemView {
       randResult.style.display = '';
       randVal.textContent = res.choose ? '→ Choose: scegli tu (riga vuota)' : res.item;
       randRoll.textContent = `Tiro: ${res.roll}`;
+      if (this.plugin.settings.logLevel === 'full') {
+        const entry = res.choose ? 'Choose (riga vuota)' : res.item;
+        this.plugin.logResult([`📋 ${label}: ${entry} (${res.roll})`]);
+      }
     };
 
-    randFiliBtn.onclick = () => doRandRoll(this.threads);
-    randPngBtn.onclick = () => doRandRoll(this.characters);
+    randFiliBtn.onclick = () => doRandRoll(this.threads, 'Filo');
+    randPngBtn.onclick = () => doRandRoll(this.characters, 'Personaggio');
   }
 
   renderList(parentEl, items, placeholder, onUpdate) {
@@ -933,6 +960,11 @@ class MythicPlugin extends Plugin {
       chaosFactor: 5,
       oracleMethod: 'chart',
       activeTab: 'oracle',
+      enableLogging: false,
+      logLevel: 'narrative',
+      logTarget: 'active',
+      logNotePath: '',
+      ttrpgNotationIntegration: false,
       threads: [],
       characters: []
     }, await this.loadData());
@@ -940,6 +972,46 @@ class MythicPlugin extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+
+  ttrpgAvailable() {
+    return !!this.app.plugins.plugins['solo-ttrpg-notation'];
+  }
+
+  async logResult(lines, triggerScene = false) {
+    const s = this.settings;
+    if (!s.enableLogging) return;
+
+    const useTtrpg = s.ttrpgNotationIntegration && this.ttrpgAvailable();
+
+    if (triggerScene && useTtrpg) {
+      this.app.commands.executeCommandById('solo-ttrpg-notation:insert-ttrpg-scene');
+    }
+
+    let file;
+    if (s.logTarget === 'fixed' && s.logNotePath) {
+      const { TFile } = require('obsidian');
+      file = this.app.vault.getAbstractFileByPath(s.logNotePath);
+      if (!file) {
+        new (require('obsidian').Notice)(`Mythic GME: nota non trovata: "${s.logNotePath}"`);
+        return;
+      }
+    } else {
+      file = this.app.workspace.getActiveFile();
+    }
+
+    if (!file) {
+      new (require('obsidian').Notice)('Mythic GME: nessuna nota attiva per il log.');
+      return;
+    }
+
+    const current = await this.app.vault.read(file);
+    const block = useTtrpg
+      ? '\n```ttrpg\n' + lines.join('\n') + '\n```\n'
+      : '\n' + lines.join('\n') + '\n';
+
+    await this.app.vault.modify(file, current + block);
+    new (require('obsidian').Notice)(`Mythic GME: loggato in "${file.name}"`);
   }
 }
 
@@ -953,6 +1025,9 @@ class MythicSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
+    // ── Oracle ──────────────────────────────────────────────────────────────
+    containerEl.createEl('h3', { text: 'Oracle' });
+
     new Setting(containerEl)
       .setName('Metodo Oracle')
       .setDesc('Fate Chart usa un d100 con tabella; Fate Check usa 2d10 confrontati con gli odds.')
@@ -965,6 +1040,82 @@ class MythicSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         })
       );
+
+    // ── Log ─────────────────────────────────────────────────────────────────
+    containerEl.createEl('h3', { text: 'Log risultati' });
+
+    new Setting(containerEl)
+      .setName('Abilita log')
+      .setDesc('Scrive i risultati in una nota Obsidian.')
+      .addToggle(t => t
+        .setValue(this.plugin.settings.enableLogging)
+        .onChange(async (value) => {
+          this.plugin.settings.enableLogging = value;
+          await this.plugin.saveSettings();
+          this.display();
+        })
+      );
+
+    if (this.plugin.settings.enableLogging) {
+      new Setting(containerEl)
+        .setName('Livello log')
+        .setDesc('Narrativo: solo tiri significativi. Completo: tutti i tiri.')
+        .addDropdown(drop => drop
+          .addOption('narrative', 'Solo risultati narrativi')
+          .addOption('full', 'Tutti i tiri')
+          .setValue(this.plugin.settings.logLevel)
+          .onChange(async (value) => {
+            this.plugin.settings.logLevel = value;
+            await this.plugin.saveSettings();
+          })
+        );
+
+      new Setting(containerEl)
+        .setName('Nota target')
+        .setDesc('Dove scrivere il log.')
+        .addDropdown(drop => drop
+          .addOption('active', 'Nota attiva')
+          .addOption('fixed', 'Nota fissa (percorso sotto)')
+          .setValue(this.plugin.settings.logTarget)
+          .onChange(async (value) => {
+            this.plugin.settings.logTarget = value;
+            await this.plugin.saveSettings();
+            this.display();
+          })
+        );
+
+      if (this.plugin.settings.logTarget === 'fixed') {
+        new Setting(containerEl)
+          .setName('Percorso nota fissa')
+          .setDesc('Es: Campagna/mythic-log.md — la nota deve esistere.')
+          .addText(t => t
+            .setPlaceholder('Cartella/nome-nota.md')
+            .setValue(this.plugin.settings.logNotePath)
+            .onChange(async (value) => {
+              this.plugin.settings.logNotePath = value;
+              await this.plugin.saveSettings();
+            })
+          );
+      }
+
+      if (this.plugin.ttrpgAvailable()) {
+        new Setting(containerEl)
+          .setName('Integrazione Solo TTRPG Notation')
+          .setDesc('Scrive il log nel formato ttrpg e inserisce una scena automaticamente quando testi una scena.')
+          .addToggle(t => t
+            .setValue(this.plugin.settings.ttrpgNotationIntegration)
+            .onChange(async (value) => {
+              this.plugin.settings.ttrpgNotationIntegration = value;
+              await this.plugin.saveSettings();
+            })
+          );
+      } else {
+        containerEl.createEl('p', {
+          text: '⚠️ Plugin "Solo TTRPG Notation" non trovato — installa il plugin per abilitare l\'integrazione.',
+          attr: { style: 'font-size:12px; color:var(--text-muted); margin: 4px 0 0 0;' }
+        });
+      }
+    }
   }
 }
 
