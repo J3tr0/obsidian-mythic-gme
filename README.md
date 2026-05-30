@@ -76,6 +76,12 @@ If [Solo TTRPG Notation](https://github.com/J3tr0/obsidian-solo-ttrpg-notation) 
 - No build step required — plain JavaScript
 - [Solo TTRPG Notation](https://github.com/J3tr0/obsidian-solo-ttrpg-notation) (optional, for notation integration)
 
+## Attribution
+
+This plugin is based on the game mechanics of **Mythic Game Master Emulator 2nd Edition** by Tana Pigeon, published by [Word Mill Games](https://www.wordmillgames.com). Used under the [Word Mill Games Non-Commercial License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+
+This plugin is not official and is not published by Word Mill Games.
+
 ## License
 
-[MIT](LICENSE)
+[CC BY-NC 4.0](LICENSE) — free to use and adapt, non-commercial only.
