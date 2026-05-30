@@ -351,7 +351,7 @@ function rollFateCheck(oddsIdx, cf) {
 
   let answer, isExceptional, isRandomEvent;
 
-  if (total >= 18 && total <= 20) {
+  if (total >= 18) {
     answer = 'Sì Eccezionale';
     isExceptional = true;
   } else if (total >= 11) {
@@ -576,8 +576,15 @@ class MythicView extends ItemView {
         eventEl.style.display = 'none';
       }
 
-      const logLines = [`? [${ODDS_LABELS[oddsIdx]}] (CF ${this.cf}) → ${res.answer} (tiro: ${res.roll})`];
-      if (res.isRandomEvent) logLines.push('⚡ Evento Casuale attivato!');
+      const ut = this.plugin.useTtrpgLog();
+      let logLines;
+      if (ut) {
+        const replyLine = `-> ${res.answer} (tiro: ${res.roll})${res.isRandomEvent ? ' ⚡' : ''}`;
+        logLines = [`? [${ODDS_LABELS[oddsIdx]}] (CF ${this.cf})`, replyLine];
+      } else {
+        logLines = [`? [${ODDS_LABELS[oddsIdx]}] (CF ${this.cf}) → ${res.answer} (tiro: ${res.roll})`];
+        if (res.isRandomEvent) logLines.push('⚡ Evento Casuale attivato!');
+      }
       this.plugin.logResult(logLines);
     };
 
@@ -598,8 +605,12 @@ class MythicView extends ItemView {
       npcResult.addClass('visible');
       npcWordVal.textContent = res.result;
       npcRollInfo.textContent = `Tiro: ${res.roll}`;
-      if (this.plugin.settings.logLevel === 'full')
-        this.plugin.logResult([`🎭 Comportamento PNG: ${res.result} (${res.roll})`]);
+      if (this.plugin.settings.logLevel === 'full') {
+        const ut = this.plugin.useTtrpgLog();
+        this.plugin.logResult([ut
+          ? `d: PNG ${res.result} (${res.roll})`
+          : `🎭 Comportamento PNG: ${res.result} (${res.roll})`]);
+      }
     };
   }
 
@@ -681,9 +692,17 @@ class MythicView extends ItemView {
         listResultBox.style.display = 'none';
       }
 
-      const logLines = [`⚡ Focus: ${focus.result} | ${meaning.word1} / ${meaning.word2}`];
-      if (meaning.doubledDown) logLines.push('⚠️ Doubling Down!');
-      if (listEntry) logLines.push(`📋 Lista: ${listEntry}`);
+      const ut = this.plugin.useTtrpgLog();
+      let logLines;
+      if (ut) {
+        logLines = [`d: Focus: ${focus.result} (d100: ${focus.roll})`, `=> ${meaning.word1} / ${meaning.word2}`];
+        if (meaning.doubledDown) logLines.push('(⚠️ Doubling Down!)');
+        if (listEntry) logLines.push(`(Lista: ${listEntry})`);
+      } else {
+        logLines = [`⚡ Focus: ${focus.result} | ${meaning.word1} / ${meaning.word2}`];
+        if (meaning.doubledDown) logLines.push('⚠️ Doubling Down!');
+        if (listEntry) logLines.push(`📋 Lista: ${listEntry}`);
+      }
       this.plugin.logResult(logLines);
     };
 
@@ -703,8 +722,12 @@ class MythicView extends ItemView {
       focusOnlyBox.style.display = '';
       focusOnlyVal.textContent = focus.result;
       focusOnlyRoll.textContent = `Tiro: ${focus.roll}`;
-      if (this.plugin.settings.logLevel === 'full')
-        this.plugin.logResult([`⚡ Focus: ${focus.result} (d100: ${focus.roll})`]);
+      if (this.plugin.settings.logLevel === 'full') {
+        const ut = this.plugin.useTtrpgLog();
+        this.plugin.logResult([ut
+          ? `d: Focus: ${focus.result} (d100: ${focus.roll})`
+          : `⚡ Focus: ${focus.result} (d100: ${focus.roll})`]);
+      }
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -738,8 +761,15 @@ class MythicView extends ItemView {
       mw2Val.textContent = m.word2;
       doubleDownNote.style.display = m.doubledDown ? '' : 'none';
       if (this.plugin.settings.logLevel === 'full') {
-        const lines = [`📖 ${tableSelect.value}: ${m.word1} / ${m.word2}`];
-        if (m.doubledDown) lines.push('⚠️ Doubling Down!');
+        const ut = this.plugin.useTtrpgLog();
+        let lines;
+        if (ut) {
+          lines = [`d: ${tableSelect.value}: ${m.word1} / ${m.word2}`];
+          if (m.doubledDown) lines.push('(⚠️ Doubling Down!)');
+        } else {
+          lines = [`📖 ${tableSelect.value}: ${m.word1} / ${m.word2}`];
+          if (m.doubledDown) lines.push('⚠️ Doubling Down!');
+        }
         this.plugin.logResult(lines);
       }
     };
@@ -776,7 +806,11 @@ class MythicView extends ItemView {
       } else {
         sceneNote.textContent = 'La scena inizia come previsto!';
       }
-      this.plugin.logResult([`> ${res.desc} (d10: ${res.roll}, CF: ${this.cf})`], true);
+      const ut = this.plugin.useTtrpgLog();
+      const sceneLogLines = ut
+        ? [`S ${res.desc}`, `(d10: ${res.roll}, CF: ${this.cf})`]
+        : [`Scena: ${res.desc} (d10: ${res.roll}, CF: ${this.cf})`];
+      this.plugin.logResult(sceneLogLines);
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -795,8 +829,12 @@ class MythicView extends ItemView {
       adjBox.style.display = '';
       adjVal.textContent = res.result;
       adjRoll.textContent = `Tiro d10: ${res.roll}`;
-      if (this.plugin.settings.logLevel === 'full')
-        this.plugin.logResult([`🎲 Aggiustamento Scena: ${res.result} (d10: ${res.roll})`]);
+      if (this.plugin.settings.logLevel === 'full') {
+        const ut = this.plugin.useTtrpgLog();
+        this.plugin.logResult([ut
+          ? `d: Aggiustamento: ${res.result} (d10: ${res.roll})`
+          : `🎲 Aggiustamento Scena: ${res.result} (d10: ${res.roll})`]);
+      }
     };
 
     el.createEl('hr', { cls: 'mythic-divider' });
@@ -861,8 +899,11 @@ class MythicView extends ItemView {
       randVal.textContent = res.choose ? '→ Choose: scegli tu (riga vuota)' : res.item;
       randRoll.textContent = `Tiro: ${res.roll}`;
       if (this.plugin.settings.logLevel === 'full') {
+        const ut = this.plugin.useTtrpgLog();
         const entry = res.choose ? 'Choose (riga vuota)' : res.item;
-        this.plugin.logResult([`📋 ${label}: ${entry} (${res.roll})`]);
+        this.plugin.logResult([ut
+          ? `d: ${label}: ${entry} (${res.roll})`
+          : `📋 ${label}: ${entry} (${res.roll})`]);
       }
     };
 
@@ -978,15 +1019,15 @@ class MythicPlugin extends Plugin {
     return !!this.app.plugins.plugins['solo-ttrpg-notation'];
   }
 
-  async logResult(lines, triggerScene = false) {
+  useTtrpgLog() {
+    return !!(this.settings.enableLogging && this.settings.ttrpgNotationIntegration && this.ttrpgAvailable());
+  }
+
+  async logResult(lines) {
     const s = this.settings;
     if (!s.enableLogging) return;
 
     const useTtrpg = s.ttrpgNotationIntegration && this.ttrpgAvailable();
-
-    if (triggerScene && useTtrpg) {
-      this.app.commands.executeCommandById('solo-ttrpg-notation:insert-ttrpg-scene');
-    }
 
     let file;
     if (s.logTarget === 'fixed' && s.logNotePath) {

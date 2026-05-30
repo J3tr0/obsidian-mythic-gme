@@ -10,6 +10,8 @@ An [Obsidian](https://obsidian.md) plugin for playing solo RPGs with [Mythic Gam
 - **Lists** — Thread and Character lists with section-based random extraction (up to 25 entries each)
 - **Chaos Factor** — Tracks CF from 1 to 9, persisted across sessions
 - Automatic Random Event detection on doubles (Fate Chart and Fate Check)
+- **Roll logging** — Write results to any Obsidian note (narrative or full log level)
+- **Solo TTRPG Notation integration** — Logs results using the `ttrpg` code block format when [Solo TTRPG Notation](https://github.com/J3tr0/obsidian-solo-ttrpg-notation) is installed
 - Italian UI
 
 ## Installation
@@ -47,10 +49,32 @@ Test the expected scene against the current CF. Altered and Interrupted scenes a
 ### Lists tab
 Add Threads (objectives) and Characters (NPCs). Use the **Filo** / **Personaggio** buttons to extract a random entry using the section-based dice mechanic from the book (d10 for 1–5 entries, scaling up to d10+d10 for 21–25).
 
+## Roll Logging
+
+Enable logging in **Settings → Mythic GME 2nd Edition → Log risultati**.
+
+- **Narrative level** — only meaningful rolls: Oracle answers, Random Events, Scene tests
+- **Full level** — all rolls including NPC Behavior, Meaning tables, Scene Adjustment, list extractions
+- **Target** — write to the active note or a fixed note path
+
+## Solo TTRPG Notation Integration
+
+If [Solo TTRPG Notation](https://github.com/J3tr0/obsidian-solo-ttrpg-notation) is installed, you can enable the integration in the plugin settings. When active, roll results are logged using the `ttrpg` code block format with proper notation symbols:
+
+| Result | Symbol | Example |
+|---|---|---|
+| Oracle question | `?` | `? [50/50] (CF 5)` |
+| Oracle answer | `->` | `-> Sì (tiro: 24)` |
+| Scene test | `S` | `S Scena Attesa` |
+| Mechanics / roll | `d:` | `d: Focus: Azione PNG (d100: 42)` |
+| Narrative outcome | `=>` | `=> Usare male / Battaglia` |
+| Metadata | `(...)` | `(d10: 8, CF: 5)` |
+
 ## Requirements
 
 - Obsidian 1.5.0 or later
 - No build step required — plain JavaScript
+- [Solo TTRPG Notation](https://github.com/J3tr0/obsidian-solo-ttrpg-notation) (optional, for notation integration)
 
 ## License
 
